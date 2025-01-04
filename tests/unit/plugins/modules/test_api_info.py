@@ -7,7 +7,9 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 from ansible_collections.community.routeros.tests.unit.compat.mock import patch, MagicMock
-from ansible_collections.community.routeros.tests.unit.plugins.modules.fake_api import FakeLibRouterosError, Key, fake_ros_api
+from ansible_collections.community.routeros.tests.unit.plugins.modules.fake_api import (
+    FAKE_ROS_VERSION, FakeLibRouterosError, Key, fake_ros_api,
+)
 from ansible_collections.community.routeros.tests.unit.plugins.modules.utils import set_module_args, AnsibleExitJson, AnsibleFailJson, ModuleTestCase
 from ansible_collections.community.routeros.plugins.modules import api_info
 
@@ -22,6 +24,10 @@ class TestRouterosApiInfoModule(ModuleTestCase):
         self.module.check_has_library = MagicMock()
         self.patch_create_api = patch('ansible_collections.community.routeros.plugins.modules.api_info.create_api', MagicMock(new=fake_ros_api))
         self.patch_create_api.start()
+        self.patch_get_api_version = patch(
+            'ansible_collections.community.routeros.plugins.modules.api_info.get_api_version',
+            MagicMock(return_value=FAKE_ROS_VERSION))
+        self.patch_get_api_version.start()
         self.module.Key = MagicMock(new=Key)
         self.config_module_args = {
             'username': 'admin',
@@ -30,6 +36,7 @@ class TestRouterosApiInfoModule(ModuleTestCase):
         }
 
     def tearDown(self):
+        self.patch_get_api_version.stop()
         self.patch_create_api.stop()
 
     def test_module_fail_when_required_args_missing(self):
@@ -191,6 +198,8 @@ class TestRouterosApiInfoModule(ModuleTestCase):
             'chain': 'input',
             'in-interface-list': 'LAN',
             '!action': None,
+            '!address-list': None,
+            '!address-list-timeout': None,
             '!comment': None,
             '!connection-bytes': None,
             '!connection-limit': None,
@@ -236,6 +245,7 @@ class TestRouterosApiInfoModule(ModuleTestCase):
             '!protocol': None,
             '!psd': None,
             '!random': None,
+            '!realm': None,
             '!reject-with': None,
             '!routing-mark': None,
             '!routing-table': None,
@@ -277,6 +287,8 @@ class TestRouterosApiInfoModule(ModuleTestCase):
             'chain': 'input',
             'in-interface-list': 'LAN',
             'action': None,
+            'address-list': None,
+            'address-list-timeout': None,
             'comment': None,
             'connection-bytes': None,
             'connection-limit': None,
@@ -322,6 +334,7 @@ class TestRouterosApiInfoModule(ModuleTestCase):
             'protocol': None,
             'psd': None,
             'random': None,
+            'realm': None,
             'reject-with': None,
             'routing-mark': None,
             'routing-table': None,
@@ -807,5 +820,171 @@ class TestRouterosApiInfoModule(ModuleTestCase):
                 'allow-fast-path': True,
                 'disabled': False,
                 'comment': 'foo',
+            },
+        ])
+
+    @patch('ansible_collections.community.routeros.plugins.modules.api_info.compose_api_path')
+    def test_restrict_1(self, mock_compose_api_path):
+        mock_compose_api_path.return_value = [
+            {
+                'chain': 'input',
+                'in-interface-list': 'LAN',
+                'dynamic': False,
+                '.id': '*1',
+            },
+            {
+                'chain': 'forward',
+                'action': 'drop',
+                'in-interface': 'sfp1',
+                '.id': '*2',
+                'dynamic': False,
+            },
+        ]
+        with self.assertRaises(AnsibleExitJson) as exc:
+            args = self.config_module_args.copy()
+            args.update({
+                'path': 'ip firewall filter',
+                'handle_disabled': 'omit',
+                'restrict': [],
+            })
+            set_module_args(args)
+            self.module.main()
+
+        result = exc.exception.args[0]
+        self.assertEqual(result['changed'], False)
+        self.assertEqual(result['result'], [
+            {
+                'chain': 'input',
+                'in-interface-list': 'LAN',
+                '.id': '*1',
+            },
+            {
+                'chain': 'forward',
+                'action': 'drop',
+                'in-interface': 'sfp1',
+                '.id': '*2',
+            },
+        ])
+
+    @patch('ansible_collections.community.routeros.plugins.modules.api_info.compose_api_path')
+    def test_restrict_2(self, mock_compose_api_path):
+        mock_compose_api_path.return_value = [
+            {
+                'chain': 'input',
+                'in-interface-list': 'LAN',
+                'dynamic': False,
+                '.id': '*1',
+            },
+            {
+                'chain': 'forward',
+                'action': 'drop',
+                'in-interface': 'sfp1',
+                '.id': '*2',
+                'dynamic': False,
+            },
+            {
+                'chain': 'input',
+                'action': 'drop',
+                'dynamic': False,
+                '.id': '*3',
+            },
+        ]
+        with self.assertRaises(AnsibleExitJson) as exc:
+            args = self.config_module_args.copy()
+            args.update({
+                'path': 'ip firewall filter',
+                'handle_disabled': 'omit',
+                'restrict': [{
+                    'field': 'chain',
+                    'values': ['forward'],
+                }],
+            })
+            set_module_args(args)
+            self.module.main()
+
+        result = exc.exception.args[0]
+        self.assertEqual(result['changed'], False)
+        self.assertEqual(result['result'], [
+            {
+                'chain': 'forward',
+                'action': 'drop',
+                'in-interface': 'sfp1',
+                '.id': '*2',
+            },
+        ])
+
+    @patch('ansible_collections.community.routeros.plugins.modules.api_info.compose_api_path')
+    def test_restrict_3(self, mock_compose_api_path):
+        mock_compose_api_path.return_value = [
+            {
+                'chain': 'input',
+                'in-interface-list': 'LAN',
+                'dynamic': False,
+                '.id': '*1',
+            },
+            {
+                'chain': 'forward',
+                'action': 'drop',
+                'in-interface': 'sfp1',
+                '.id': '*2',
+                'dynamic': False,
+            },
+            {
+                'chain': 'input',
+                'action': 'drop',
+                'dynamic': False,
+                '.id': '*3',
+            },
+            {
+                'chain': 'input',
+                'action': 'drop',
+                'comment': 'Foo',
+                'dynamic': False,
+                '.id': '*4',
+            },
+            {
+                'chain': 'input',
+                'action': 'drop',
+                'comment': 'Bar',
+                'dynamic': False,
+                '.id': '*5',
+            },
+        ]
+        with self.assertRaises(AnsibleExitJson) as exc:
+            args = self.config_module_args.copy()
+            args.update({
+                'path': 'ip firewall filter',
+                'handle_disabled': 'omit',
+                'restrict': [
+                    {
+                        'field': 'chain',
+                        'values': ['input', 'foobar'],
+                    },
+                    {
+                        'field': 'action',
+                        'values': ['drop', 42],
+                    },
+                    {
+                        'field': 'comment',
+                        'values': [None, 'Foo'],
+                    },
+                ],
+            })
+            set_module_args(args)
+            self.module.main()
+
+        result = exc.exception.args[0]
+        self.assertEqual(result['changed'], False)
+        self.assertEqual(result['result'], [
+            {
+                'chain': 'input',
+                'action': 'drop',
+                '.id': '*3',
+            },
+            {
+                'chain': 'input',
+                'action': 'drop',
+                'comment': 'Foo',
+                '.id': '*4',
             },
         ])

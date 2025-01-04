@@ -7,9 +7,13 @@ name: Verify REUSE
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - stable-*
   pull_request:
-    branches: [main]
+    branches:
+      - main
+      - stable-*
   # Run CI once per day (at 05:15 UTC)
   schedule:
     - cron: '15 5 * * *'
@@ -21,12 +25,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
-      - name: Install dependencies
-        run: |
-          pip install reuse
-
-      - name: Check REUSE compliance
-        run: |
-          reuse lint
+      - name: REUSE Compliance Check
+        uses: fsfe/reuse-action@v5

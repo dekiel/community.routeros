@@ -8,8 +8,7 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-DOCUMENTATION = '''
----
+DOCUMENTATION = r"""
 module: api_modify
 author:
   - "Felix Fontein (@felixfontein)"
@@ -17,17 +16,22 @@ short_description: Modify data at paths with API
 version_added: 2.2.0
 description:
   - Allows to modify information for a path using the API.
-  - Use the M(community.routeros.api_find_and_modify) module to modify one or multiple entries in a controlled way
-    depending on some search conditions.
+  - Use the M(community.routeros.api_find_and_modify) module to modify one or multiple entries in a controlled way depending
+    on some search conditions.
   - To make a backup of a path that can be restored with this module, use the M(community.routeros.api_info) module.
   - The module ignores dynamic and builtin entries.
-  - B(Note) that this module is still heavily in development, and only supports B(some) paths.
-    If you want to support new paths, or think you found problems with existing paths, please first
-    L(create an issue in the community.routeros Issue Tracker,https://github.com/ansible-collections/community.routeros/issues/).
+  - B(Note) that this module is still heavily in development, and only supports B(some) paths. If you want to support new
+    paths, or think you found problems with existing paths, please first L(create an issue in the community.routeros Issue
+    Tracker,https://github.com/ansible-collections/community.routeros/issues/).
+notes:
+  - If write-only fields are present in the path, the module is B(not idempotent) in a strict sense, since it is not able
+    to verify the current value of these fields. The behavior the module should assume can be controlled with the O(handle_write_only)
+    option.
 requirements:
   - Needs L(ordereddict,https://pypi.org/project/ordereddict) for Python 2.6
 extends_documentation_fragment:
   - community.routeros.api
+  - community.routeros.api.restrict
   - community.routeros.attributes
   - community.routeros.attributes.actiongroup_api
 attributes:
@@ -38,157 +42,237 @@ attributes:
   platform:
     support: full
     platforms: RouterOS
+  idempotent:
+    support: full
 options:
   path:
     description:
       - Path to query.
-      - An example value is C(ip address). This is equivalent to running modification commands in C(/ip address) in the RouterOS CLI.
+      - An example value is V(ip address). This is equivalent to running modification commands in C(/ip address) in the RouterOS
+        CLI.
     required: true
     type: str
     choices:
     # BEGIN PATH LIST
-        - caps-man aaa
-        - caps-man access-list
-        - caps-man configuration
-        - caps-man datapath
-        - caps-man manager
-        - caps-man provisioning
-        - caps-man security
-        - certificate settings
-        - interface bonding
-        - interface bridge
-        - interface bridge mlag
-        - interface bridge port
-        - interface bridge port-controller
-        - interface bridge port-extender
-        - interface bridge settings
-        - interface bridge vlan
-        - interface detect-internet
-        - interface eoip
-        - interface ethernet
-        - interface ethernet poe
-        - interface ethernet switch
-        - interface ethernet switch port
-        - interface gre
-        - interface gre6
-        - interface l2tp-server server
-        - interface list
-        - interface list member
-        - interface ovpn-server server
-        - interface pppoe-client
-        - interface pptp-server server
-        - interface sstp-server server
-        - interface vlan
-        - interface vrrp
-        - interface wireguard
-        - interface wireguard peers
-        - interface wireless align
-        - interface wireless cap
-        - interface wireless sniffer
-        - interface wireless snooper
-        - ip accounting
-        - ip accounting web-access
-        - ip address
-        - ip arp
-        - ip cloud
-        - ip cloud advanced
-        - ip dhcp-client
-        - ip dhcp-client option
-        - ip dhcp-server
-        - ip dhcp-server config
-        - ip dhcp-server lease
-        - ip dhcp-server network
-        - ip dns
-        - ip dns static
-        - ip firewall address-list
-        - ip firewall connection tracking
-        - ip firewall filter
-        - ip firewall layer7-protocol
-        - ip firewall mangle
-        - ip firewall nat
-        - ip firewall raw
-        - ip firewall service-port
-        - ip hotspot service-port
-        - ip ipsec identity
-        - ip ipsec peer
-        - ip ipsec policy
-        - ip ipsec profile
-        - ip ipsec proposal
-        - ip ipsec settings
-        - ip neighbor discovery-settings
-        - ip pool
-        - ip proxy
-        - ip route
-        - ip route vrf
-        - ip service
-        - ip settings
-        - ip smb
-        - ip socks
-        - ip ssh
-        - ip tftp settings
-        - ip traffic-flow
-        - ip traffic-flow ipfix
-        - ip upnp
-        - ipv6 address
-        - ipv6 dhcp-client
-        - ipv6 dhcp-server
-        - ipv6 dhcp-server option
-        - ipv6 firewall address-list
-        - ipv6 firewall filter
-        - ipv6 firewall mangle
-        - ipv6 firewall raw
-        - ipv6 nd
-        - ipv6 nd prefix default
-        - ipv6 route
-        - ipv6 settings
-        - mpls
-        - mpls ldp
-        - port firmware
-        - ppp aaa
-        - queue interface
-        - queue tree
-        - radius incoming
-        - routing bgp instance
-        - routing mme
-        - routing ospf area
-        - routing ospf area range
-        - routing ospf instance
-        - routing ospf interface-template
-        - routing pimsm instance
-        - routing pimsm interface-template
-        - routing rip
-        - routing ripng
-        - snmp
-        - snmp community
-        - system clock
-        - system clock manual
-        - system identity
-        - system leds settings
-        - system logging
-        - system logging action
-        - system note
-        - system ntp client
-        - system ntp client servers
-        - system ntp server
-        - system package update
-        - system routerboard settings
-        - system scheduler
-        - system script
-        - system upgrade mirror
-        - system ups
-        - system watchdog
-        - tool bandwidth-server
-        - tool e-mail
-        - tool graphing
-        - tool mac-server
-        - tool mac-server mac-winbox
-        - tool mac-server ping
-        - tool romon
-        - tool sms
-        - tool sniffer
-        - tool traffic-generator
-        - user aaa
-        - user group
+      - caps-man aaa
+      - caps-man access-list
+      - caps-man channel
+      - caps-man configuration
+      - caps-man datapath
+      - caps-man manager
+      - caps-man manager interface
+      - caps-man provisioning
+      - caps-man security
+      - certificate settings
+      - interface bonding
+      - interface bridge
+      - interface bridge mlag
+      - interface bridge port
+      - interface bridge port-controller
+      - interface bridge port-extender
+      - interface bridge settings
+      - interface bridge vlan
+      - interface detect-internet
+      - interface eoip
+      - interface ethernet
+      - interface ethernet poe
+      - interface ethernet switch
+      - interface ethernet switch port
+      - interface gre
+      - interface gre6
+      - interface l2tp-client
+      - interface l2tp-server server
+      - interface list
+      - interface list member
+      - interface ovpn-client
+      - interface ovpn-server server
+      - interface ppp-client
+      - interface pppoe-client
+      - interface pppoe-server server
+      - interface pptp-server server
+      - interface sstp-server server
+      - interface vlan
+      - interface vrrp
+      - interface wifi
+      - interface wifi aaa
+      - interface wifi access-list
+      - interface wifi cap
+      - interface wifi capsman
+      - interface wifi channel
+      - interface wifi configuration
+      - interface wifi datapath
+      - interface wifi interworking
+      - interface wifi provisioning
+      - interface wifi security
+      - interface wifi steering
+      - interface wifiwave2
+      - interface wifiwave2 aaa
+      - interface wifiwave2 access-list
+      - interface wifiwave2 cap
+      - interface wifiwave2 capsman
+      - interface wifiwave2 channel
+      - interface wifiwave2 configuration
+      - interface wifiwave2 datapath
+      - interface wifiwave2 interworking
+      - interface wifiwave2 provisioning
+      - interface wifiwave2 security
+      - interface wifiwave2 steering
+      - interface wireguard
+      - interface wireguard peers
+      - interface wireless
+      - interface wireless align
+      - interface wireless cap
+      - interface wireless security-profiles
+      - interface wireless sniffer
+      - interface wireless snooper
+      - iot modbus
+      - ip accounting
+      - ip accounting web-access
+      - ip address
+      - ip arp
+      - ip cloud
+      - ip cloud advanced
+      - ip dhcp-client
+      - ip dhcp-client option
+      - ip dhcp-relay
+      - ip dhcp-server
+      - ip dhcp-server config
+      - ip dhcp-server lease
+      - ip dhcp-server matcher
+      - ip dhcp-server network
+      - ip dhcp-server option
+      - ip dhcp-server option sets
+      - ip dns
+      - ip dns adlist
+      - ip dns static
+      - ip firewall address-list
+      - ip firewall connection tracking
+      - ip firewall filter
+      - ip firewall layer7-protocol
+      - ip firewall mangle
+      - ip firewall nat
+      - ip firewall raw
+      - ip firewall service-port
+      - ip hotspot service-port
+      - ip ipsec identity
+      - ip ipsec peer
+      - ip ipsec policy
+      - ip ipsec profile
+      - ip ipsec proposal
+      - ip ipsec settings
+      - ip neighbor discovery-settings
+      - ip pool
+      - ip proxy
+      - ip route
+      - ip route rule
+      - ip route vrf
+      - ip service
+      - ip settings
+      - ip smb
+      - ip socks
+      - ip ssh
+      - ip tftp settings
+      - ip traffic-flow
+      - ip traffic-flow ipfix
+      - ip traffic-flow target
+      - ip upnp
+      - ip upnp interfaces
+      - ip vrf
+      - ipv6 address
+      - ipv6 dhcp-client
+      - ipv6 dhcp-server
+      - ipv6 dhcp-server option
+      - ipv6 firewall address-list
+      - ipv6 firewall filter
+      - ipv6 firewall mangle
+      - ipv6 firewall nat
+      - ipv6 firewall raw
+      - ipv6 nd
+      - ipv6 nd prefix
+      - ipv6 nd prefix default
+      - ipv6 route
+      - ipv6 settings
+      - mpls
+      - mpls interface
+      - mpls ldp
+      - mpls ldp accept-filter
+      - mpls ldp advertise-filter
+      - mpls ldp interface
+      - port firmware
+      - port remote-access
+      - ppp aaa
+      - ppp profile
+      - ppp secret
+      - queue interface
+      - queue simple
+      - queue tree
+      - queue type
+      - radius
+      - radius incoming
+      - routing bgp aggregate
+      - routing bgp connection
+      - routing bgp instance
+      - routing bgp network
+      - routing bgp peer
+      - routing bgp template
+      - routing filter
+      - routing filter community-list
+      - routing filter num-list
+      - routing filter rule
+      - routing filter select-rule
+      - routing id
+      - routing igmp-proxy
+      - routing igmp-proxy interface
+      - routing mme
+      - routing ospf area
+      - routing ospf area range
+      - routing ospf instance
+      - routing ospf interface-template
+      - routing ospf static-neighbor
+      - routing pimsm instance
+      - routing pimsm interface-template
+      - routing rip
+      - routing ripng
+      - routing rule
+      - routing table
+      - snmp
+      - snmp community
+      - system clock
+      - system clock manual
+      - system health settings
+      - system identity
+      - system leds settings
+      - system logging
+      - system logging action
+      - system note
+      - system ntp client
+      - system ntp client servers
+      - system ntp server
+      - system package update
+      - system resource irq rps
+      - system routerboard settings
+      - system scheduler
+      - system script
+      - system upgrade mirror
+      - system ups
+      - system watchdog
+      - tool bandwidth-server
+      - tool e-mail
+      - tool graphing
+      - tool graphing interface
+      - tool graphing resource
+      - tool mac-server
+      - tool mac-server mac-winbox
+      - tool mac-server ping
+      - tool netwatch
+      - tool romon
+      - tool sms
+      - tool sniffer
+      - tool traffic-generator
+      - user
+      - user aaa
+      - user group
+      - user settings
     # END PATH LIST
   data:
     description:
@@ -200,15 +284,15 @@ options:
     elements: dict
   ensure_order:
     description:
-      - Whether to ensure the same order of the config as present in I(data).
-      - Requires I(handle_absent_entries=remove).
+      - Whether to ensure the same order of the config as present in O(data).
+      - Requires O(handle_absent_entries=remove).
     type: bool
     default: false
   handle_absent_entries:
     description:
-      - How to handle entries that are present in the current config, but not in I(data).
-      - C(ignore) ignores them.
-      - C(remove) removes them.
+      - How to handle entries that are present in the current config, but not in O(data).
+      - V(ignore) ignores them.
+      - V(remove) removes them.
     type: str
     choices:
       - ignore
@@ -216,27 +300,62 @@ options:
     default: ignore
   handle_entries_content:
     description:
-      - For a single entry in I(data), this describes how to handle fields that are not mentioned
-        in that entry, but appear in the actual config.
-      - If C(ignore), they are not modified.
-      - If C(remove), they are removed. If at least one cannot be removed, the module will fail.
-      - If C(remove_as_much_as_possible), all that can be removed will be removed. The ones that
-        cannot be removed will be kept.
+      - For a single entry in O(data), this describes how to handle fields that are not mentioned in that entry, but appear
+        in the actual config.
+      - If V(ignore), they are not modified.
+      - If V(remove), they are removed. If at least one cannot be removed, the module will fail.
+      - If V(remove_as_much_as_possible), all that can be removed will be removed. The ones that cannot be removed will be
+        kept.
+      - Note that V(remove) and V(remove_as_much_as_possible) do not apply to write-only fields.
     type: str
     choices:
       - ignore
       - remove
       - remove_as_much_as_possible
     default: ignore
+  handle_read_only:
+    description:
+      - How to handle values passed in for read-only fields.
+      - If V(ignore), they are not passed to the API.
+      - If V(validate), the values are not passed for creation, and for updating they are compared to the value returned for
+        the object. If they differ, the module fails.
+      - If V(error), the module will fail if read-only fields are provided.
+    type: str
+    choices:
+      - ignore
+      - validate
+      - error
+    default: error
+    version_added: 2.10.0
+  handle_write_only:
+    description:
+      - How to handle values passed in for write-only fields.
+      - If V(create_only), they are passed on creation, and ignored for updating.
+      - If V(always_update), they are always passed to the API. This means that if such a value is present, the module will
+        always result in C(changed) since there is no way to validate whether the value actually changed.
+      - If V(error), the module will fail if write-only fields are provided.
+    type: str
+    choices:
+      - create_only
+      - always_update
+      - error
+    default: create_only
+    version_added: 2.10.0
+  restrict:
+    description:
+      - Restrict operation to entries matching the following criteria.
+      - This can be useful together with O(handle_absent_entries=remove) to operate on a subset of the values.
+      - For example, for O(path=ip firewall filter), you can set O(restrict[].field=chain) and O(restrict[].values=input)
+        to restrict operation to the input chain, and ignore the forward and output chains.
+    version_added: 2.18.0
 seealso:
   - module: community.routeros.api
   - module: community.routeros.api_facts
   - module: community.routeros.api_find_and_modify
   - module: community.routeros.api_info
-'''
+"""
 
-EXAMPLES = '''
----
+EXAMPLES = r"""
 - name: Setup DHCP server networks
   # Ensures that we have exactly two DHCP server networks (in the specified order)
   community.routeros.api_modify:
@@ -273,43 +392,59 @@ EXAMPLES = '''
         out-interface:
         to-addresses: ~
         '!to-ports':
-'''
 
-RETURN = '''
----
+- name: Block all incoming connections
+  community.routeros.api_modify:
+    hostname: "{{ hostname }}"
+    password: "{{ password }}"
+    username: "{{ username }}"
+    path: ip firewall filter
+    handle_absent_entries: remove
+    handle_entries_content: remove_as_much_as_possible
+    restrict:
+      # Do not touch any chain except the input chain
+      - field: chain
+        values:
+          - input
+    data:
+      - action: drop
+        chain: input
+"""
+
+RETURN = r"""
 old_data:
-    description:
-      - A list of all elements for the current path before a change was made.
-    sample:
-      - '.id': '*1'
-        actual-interface: bridge
-        address: "192.168.88.1/24"
-        comment: defconf
-        disabled: false
-        dynamic: false
-        interface: bridge
-        invalid: false
-        network: 192.168.88.0
-    type: list
-    elements: dict
-    returned: always
+  description:
+    - A list of all elements for the current path before a change was made.
+  sample:
+    - '.id': '*1'
+      actual-interface: bridge
+      address: "192.168.88.1/24"
+      comment: defconf
+      disabled: false
+      dynamic: false
+      interface: bridge
+      invalid: false
+      network: 192.168.88.0
+  type: list
+  elements: dict
+  returned: always
 new_data:
-    description:
-      - A list of all elements for the current path after a change was made.
-    sample:
-      - '.id': '*1'
-        actual-interface: bridge
-        address: "192.168.1.1/24"
-        comment: awesome
-        disabled: false
-        dynamic: false
-        interface: bridge
-        invalid: false
-        network: 192.168.1.0
-    type: list
-    elements: dict
-    returned: always
-'''
+  description:
+    - A list of all elements for the current path after a change was made.
+  sample:
+    - '.id': '*1'
+      actual-interface: bridge
+      address: "192.168.1.1/24"
+      comment: awesome
+      disabled: false
+      dynamic: false
+      interface: bridge
+      invalid: false
+      network: 192.168.1.0
+  type: list
+  elements: dict
+  returned: always
+"""
 
 from collections import defaultdict
 
@@ -320,12 +455,19 @@ from ansible_collections.community.routeros.plugins.module_utils.api import (
     api_argument_spec,
     check_has_library,
     create_api,
+    get_api_version,
 )
 
 from ansible_collections.community.routeros.plugins.module_utils._api_data import (
     PATHS,
     join_path,
     split_path,
+)
+
+from ansible_collections.community.routeros.plugins.module_utils._api_helper import (
+    restrict_argument_spec,
+    restrict_entry_accepted,
+    validate_and_prepare_restrict,
 )
 
 HAS_ORDEREDDICT = True
@@ -373,6 +515,18 @@ def find_modifications(old_entry, new_entry, path_info, module, for_text='', ret
             continue
         if k not in old_entry and path_info.fields[k].default == v and not path_info.fields[k].can_disable:
             continue
+        key_info = path_info.fields[k]
+        if key_info.read_only:
+            # handle_read_only must be 'validate'
+            if old_entry.get(k) != v:
+                module.fail_json(
+                    msg='Read-only key "{key}" has value "{old_value}", but should have new value "{new_value}"{for_text}.'.format(
+                        key=k, old_value=old_entry.get(k), new_value=v, for_text=for_text))
+            continue
+        if key_info.write_only:
+            if module.params['handle_write_only'] == 'create_only':
+                # do not update this value
+                continue
         if k not in old_entry or old_entry[k] != v:
             modifications[k] = v
             updated_entry[k] = v
@@ -441,6 +595,18 @@ def essentially_same_weight(old_entry, new_entry, path_info, module):
     return weight
 
 
+def remove_read_only(entry, path_info):
+    to_remove = []
+    for real_k, v in entry.items():
+        k = real_k
+        if k.startswith('!'):
+            k = k[1:]
+        if path_info.fields[k].read_only:
+            to_remove.append(real_k)
+    for k in to_remove:
+        entry.pop(k)
+
+
 def format_pk(primary_keys, values):
     return ', '.join('{pk}="{value}"'.format(pk=pk, value=value) for pk, value in zip(primary_keys, values))
 
@@ -448,6 +614,7 @@ def format_pk(primary_keys, values):
 def polish_entry(entry, path_info, module, for_text):
     if '.id' in entry:
         entry.pop('.id')
+    to_remove = []
     for key, value in entry.items():
         real_key = key
         disabled_key = False
@@ -467,6 +634,16 @@ def polish_entry(entry, path_info, module, for_text):
         elif value is None:
             if not key_info.can_disable:
                 module.fail_json(msg='Key "{key}" must not be disabled (value null/~/None){for_text}.'.format(key=key, for_text=for_text))
+        if key_info.read_only:
+            if module.params['handle_read_only'] == 'error':
+                module.fail_json(msg='Key "{key}" is read-only{for_text}, and handle_read_only=error.'.format(key=key, for_text=for_text))
+            if module.params['handle_read_only'] == 'ignore':
+                to_remove.append(real_key)
+        if key_info.write_only:
+            if module.params['handle_write_only'] == 'error':
+                module.fail_json(msg='Key "{key}" is write-only{for_text}, and handle_write_only=error.'.format(key=key, for_text=for_text))
+    for key in to_remove:
+        entry.pop(key)
     for key, field_info in path_info.fields.items():
         if field_info.required and key not in entry:
             module.fail_json(msg='Key "{key}" must be present{for_text}.'.format(key=key, for_text=for_text))
@@ -558,18 +735,29 @@ def prepare_for_add(entry, path_info):
     return new_entry
 
 
-def sync_list(module, api, path, path_info):
+def remove_rejected(data, path_info, restrict_data):
+    return [
+        entry for entry in data
+        if restrict_entry_accepted(entry, path_info, restrict_data)
+    ]
+
+
+def sync_list(module, api, path, path_info, restrict_data):
     handle_absent_entries = module.params['handle_absent_entries']
     handle_entries_content = module.params['handle_entries_content']
     if handle_absent_entries == 'remove':
         if handle_entries_content == 'ignore':
-            module.fail_json('For this path, handle_absent_entries=remove cannot be combined with handle_entries_content=ignore')
+            module.fail_json(
+                msg='For this path, handle_absent_entries=remove cannot be combined with handle_entries_content=ignore'
+            )
 
     stratify_keys = path_info.stratify_keys or ()
 
     data = module.params['data']
     stratified_data = defaultdict(list)
     for index, entry in enumerate(data):
+        if not restrict_entry_accepted(entry, path_info, restrict_data):
+            module.fail_json(msg='The element at index #{index} does not match `restrict`'.format(index=index + 1))
         for stratify_key in stratify_keys:
             if stratify_key not in entry:
                 module.fail_json(
@@ -590,6 +778,7 @@ def sync_list(module, api, path, path_info):
 
     old_data = get_api_data(api_path, path_info)
     old_data = remove_dynamic(old_data)
+    old_data = remove_rejected(old_data, path_info, restrict_data)
     stratified_old_data = defaultdict(list)
     for index, entry in enumerate(old_data):
         sks = tuple(entry[stratify_key] for stratify_key in stratify_keys)
@@ -622,6 +811,7 @@ def sync_list(module, api, path, path_info):
                 new_data.append((old_index, updated_entry))
                 new_entry['.id'] = old_entry['.id']
             else:
+                remove_read_only(new_entry, path_info)
                 create_list.append(new_entry)
 
         if handle_absent_entries == 'remove':
@@ -701,6 +891,7 @@ def sync_list(module, api, path, path_info):
         # For sake of completeness, retrieve the full new data:
         if modify_list or create_list or reorder_list:
             new_data = remove_dynamic(get_api_data(api_path, path_info))
+            new_data = remove_rejected(new_data, path_info, restrict_data)
 
     # Remove 'irrelevant' data
     for entry in old_data:
@@ -727,7 +918,7 @@ def sync_list(module, api, path, path_info):
     )
 
 
-def sync_with_primary_keys(module, api, path, path_info):
+def sync_with_primary_keys(module, api, path, path_info, restrict_data):
     primary_keys = path_info.primary_keys
 
     if path_info.fixed_entries:
@@ -739,6 +930,8 @@ def sync_with_primary_keys(module, api, path, path_info):
     data = module.params['data']
     new_data_by_key = OrderedDict()
     for index, entry in enumerate(data):
+        if not restrict_entry_accepted(entry, path_info, restrict_data):
+            module.fail_json(msg='The element at index #{index} does not match `restrict`'.format(index=index + 1))
         for primary_key in primary_keys:
             if primary_key not in entry:
                 module.fail_json(
@@ -770,6 +963,7 @@ def sync_with_primary_keys(module, api, path, path_info):
 
     old_data = get_api_data(api_path, path_info)
     old_data = remove_dynamic(old_data)
+    old_data = remove_rejected(old_data, path_info, restrict_data)
     old_data_by_key = OrderedDict()
     id_by_key = {}
     for entry in old_data:
@@ -814,6 +1008,7 @@ def sync_with_primary_keys(module, api, path, path_info):
                     for primary_key in primary_keys
                 ]),
             ))
+        remove_read_only(new_entry, path_info)
         create_list.append(new_entry)
         new_entry = new_entry.copy()
         for key in list(new_entry):
@@ -895,6 +1090,7 @@ def sync_with_primary_keys(module, api, path, path_info):
         # For sake of completeness, retrieve the full new data:
         if modify_list or create_list or reorder_list:
             new_data = remove_dynamic(get_api_data(api_path, path_info))
+            new_data = remove_rejected(new_data, path_info, restrict_data)
 
     # Remove 'irrelevant' data
     for entry in old_data:
@@ -921,7 +1117,9 @@ def sync_with_primary_keys(module, api, path, path_info):
     )
 
 
-def sync_single_value(module, api, path, path_info):
+def sync_single_value(module, api, path, path_info, restrict_data):
+    if module.params['restrict'] is not None:
+        module.fail_json(msg='The restrict option cannot be used with this path, since there is precisely one entry.')
     data = module.params['data']
     if len(data) != 1:
         module.fail_json(msg='Data must be a list with exactly one element.')
@@ -992,16 +1190,34 @@ def get_backend(path_info):
     return None
 
 
+def has_backend(versioned_path_info):
+    if not versioned_path_info.fully_understood:
+        return False
+
+    if versioned_path_info.unversioned is not None:
+        return get_backend(versioned_path_info.unversioned) is not None
+
+    if versioned_path_info.versioned is not None:
+        for dummy, dummy, unversioned in versioned_path_info.versioned:
+            if unversioned and not isinstance(unversioned, str) and get_backend(unversioned) is not None:
+                return True
+
+    return False
+
+
 def main():
-    path_choices = sorted([join_path(path) for path, path_info in PATHS.items() if get_backend(path_info) is not None])
+    path_choices = sorted([join_path(path) for path, versioned_path_info in PATHS.items() if has_backend(versioned_path_info)])
     module_args = dict(
         path=dict(type='str', required=True, choices=path_choices),
         data=dict(type='list', elements='dict', required=True),
         handle_absent_entries=dict(type='str', choices=['ignore', 'remove'], default='ignore'),
         handle_entries_content=dict(type='str', choices=['ignore', 'remove', 'remove_as_much_as_possible'], default='ignore'),
         ensure_order=dict(type='bool', default=False),
+        handle_read_only=dict(type='str', default='error', choices=['ignore', 'validate', 'error']),
+        handle_write_only=dict(type='str', default='create_only', choices=['create_only', 'always_update', 'error']),
     )
     module_args.update(api_argument_spec())
+    module_args.update(restrict_argument_spec())
 
     module = AnsibleModule(
         argument_spec=module_args,
@@ -1018,12 +1234,24 @@ def main():
     api = create_api(module)
 
     path = split_path(module.params['path'])
-    path_info = PATHS.get(tuple(path))
+    versioned_path_info = PATHS.get(tuple(path))
+    if versioned_path_info.needs_version:
+        api_version = get_api_version(api)
+        supported, not_supported_msg = versioned_path_info.provide_version(api_version)
+        if not supported:
+            msg = 'Path /{path} is not supported for API version {api_version}'.format(path='/'.join(path), api_version=api_version)
+            if not_supported_msg:
+                msg = '{0}: {1}'.format(msg, not_supported_msg)
+            module.fail_json(msg=msg)
+    path_info = versioned_path_info.get_data()
+
     backend = get_backend(path_info)
     if path_info is None or backend is None:
         module.fail_json(msg='Path /{path} is not yet supported'.format(path='/'.join(path)))
 
-    backend(module, api, path, path_info)
+    restrict_data = validate_and_prepare_restrict(module, path_info)
+
+    backend(module, api, path, path_info, restrict_data)
 
 
 if __name__ == '__main__':

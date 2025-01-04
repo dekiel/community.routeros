@@ -389,6 +389,7 @@ class TestRouterosApiFindAndModifyModule(ModuleTestCase):
                 'ttl': '1d',
                 'disabled': False,
                 'dynamic': False,
+                'match-subdomain': False,
             },
             {
                 '.id': '*A',
@@ -397,6 +398,7 @@ class TestRouterosApiFindAndModifyModule(ModuleTestCase):
                 'ttl': '1d',
                 'disabled': False,
                 'dynamic': False,
+                'match-subdomain': False,
             },
             {
                 '.id': '*7',
@@ -406,6 +408,7 @@ class TestRouterosApiFindAndModifyModule(ModuleTestCase):
                 'ttl': '1d',
                 'disabled': False,
                 'dynamic': False,
+                'match-subdomain': False,
             },
         ])
         self.assertEqual(result['diff']['before']['values'], [
@@ -416,6 +419,7 @@ class TestRouterosApiFindAndModifyModule(ModuleTestCase):
                 'ttl': '1d',
                 'disabled': False,
                 'dynamic': False,
+                'match-subdomain': False,
             },
         ])
         self.assertEqual(result['diff']['after']['values'], [
@@ -427,6 +431,7 @@ class TestRouterosApiFindAndModifyModule(ModuleTestCase):
                 'ttl': '1d',
                 'disabled': False,
                 'dynamic': False,
+                'match-subdomain': False,
             },
         ])
         self.assertEqual(result['match_count'], 1)
@@ -459,6 +464,7 @@ class TestRouterosApiFindAndModifyModule(ModuleTestCase):
                 'ttl': '1d',
                 'disabled': False,
                 'dynamic': False,
+                'match-subdomain': False,
             },
             {
                 '.id': '*A',
@@ -467,6 +473,7 @@ class TestRouterosApiFindAndModifyModule(ModuleTestCase):
                 'ttl': '1d',
                 'disabled': False,
                 'dynamic': False,
+                'match-subdomain': False,
             },
             {
                 '.id': '*7',
@@ -475,6 +482,7 @@ class TestRouterosApiFindAndModifyModule(ModuleTestCase):
                 'ttl': '1d',
                 'disabled': False,
                 'dynamic': False,
+                'match-subdomain': False,
             },
         ])
         self.assertEqual('diff' in result, False)
@@ -508,6 +516,7 @@ class TestRouterosApiFindAndModifyModule(ModuleTestCase):
                 'ttl': '1d',
                 'disabled': False,
                 'dynamic': False,
+                'match-subdomain': False,
             },
             {
                 '.id': '*A',
@@ -516,6 +525,7 @@ class TestRouterosApiFindAndModifyModule(ModuleTestCase):
                 'ttl': '1d',
                 'disabled': False,
                 'dynamic': False,
+                'match-subdomain': False,
             },
             {
                 '.id': '*7',
@@ -524,6 +534,7 @@ class TestRouterosApiFindAndModifyModule(ModuleTestCase):
                 'ttl': '1d',
                 'disabled': False,
                 'dynamic': False,
+                'match-subdomain': False,
             },
         ])
         self.assertEqual(result['match_count'], 3)
@@ -556,6 +567,7 @@ class TestRouterosApiFindAndModifyModule(ModuleTestCase):
                 'ttl': '1d',
                 'disabled': False,
                 'dynamic': False,
+                'match-subdomain': False,
             },
             {
                 '.id': '*A',
@@ -564,6 +576,7 @@ class TestRouterosApiFindAndModifyModule(ModuleTestCase):
                 'ttl': '1d',
                 'disabled': False,
                 'dynamic': False,
+                'match-subdomain': False,
             },
             {
                 '.id': '*7',
@@ -572,6 +585,7 @@ class TestRouterosApiFindAndModifyModule(ModuleTestCase):
                 'ttl': '1d',
                 'disabled': False,
                 'dynamic': False,
+                'match-subdomain': False,
             },
         ])
         self.assertEqual(result['match_count'], 3)
@@ -605,25 +619,37 @@ class TestRouterosApiFindAndModifyModule(ModuleTestCase):
                 'chain': 'input',
                 'comment': 'defconf',
                 'protocol': 'icmp',
+                'disabled': False,
+                'log': False,
+                'log-prefix': '',
             },
             {
                 '.id': '*3',
                 'action': 'accept',
                 'chain': 'input',
                 'comment': 'defconf',
+                'disabled': False,
+                'log': False,
+                'log-prefix': '',
             },
             {
                 '.id': '*4',
                 'action': 'accept',
                 'chain': 'input',
                 'comment': 'defconf',
+                'disabled': False,
+                'log': False,
+                'log-prefix': '',
             },
             {
                 '.id': '*7',
                 'action': 'drop',
                 'chain': 'input',
                 'comment': 'defconf',
+                'disabled': False,
                 'in-interface': 'wan',
+                'log': False,
+                'log-prefix': '',
             },
             {
                 '.id': '*8',
@@ -631,6 +657,9 @@ class TestRouterosApiFindAndModifyModule(ModuleTestCase):
                 'chain': 'forward',
                 'comment': 'defconf',
                 'connection-state': 'established',
+                'disabled': False,
+                'log': False,
+                'log-prefix': '',
             },
             {
                 '.id': '*9',
@@ -638,6 +667,9 @@ class TestRouterosApiFindAndModifyModule(ModuleTestCase):
                 'chain': 'forward',
                 'comment': 'defconf',
                 'connection-state': 'related',
+                'disabled': False,
+                'log': False,
+                'log-prefix': '',
             },
             {
                 '.id': '*A',
@@ -645,6 +677,9 @@ class TestRouterosApiFindAndModifyModule(ModuleTestCase):
                 'chain': 'forward',
                 'comment': 'defconf',
                 'connection-status': 'invalid',
+                'disabled': False,
+                'log': False,
+                'log-prefix': '',
             },
         ])
         self.assertEqual(result['match_count'], 3)

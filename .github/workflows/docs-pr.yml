@@ -32,18 +32,23 @@ jobs:
       init-extra-html-theme-options: |
         documentation_home_url=https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/branch/main/
       render-file-line: '> * `$<status>` [$<path_tail>](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/pr/${{ github.event.number }}/$<path_tail>)'
+      provide-link-targets: |
+        ansible_collections.ansible.netcommon.network_cli_connection__parameter-ssh_type
 
   publish-docs-gh-pages:
     # for now we won't run this on forks
     if: github.repository == 'ansible-collections/community.routeros'
     permissions:
       contents: write
+      pages: write
+      id-token: write
     needs: [build-docs]
     name: Publish Ansible Docs
     uses: ansible-community/github-docs-build/.github/workflows/_shared-docs-build-publish-gh-pages.yml@main
     with:
       artifact-name: ${{ needs.build-docs.outputs.artifact-name }}
       action: ${{ (github.event.action == 'closed' || needs.build-docs.outputs.changed != 'true') && 'teardown' || 'publish' }}
+      publish-gh-pages-branch: true
     secrets:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
