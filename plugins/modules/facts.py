@@ -7,21 +7,19 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-DOCUMENTATION = '''
----
+DOCUMENTATION = r"""
 module: facts
 author: "Egor Zaitsev (@heuels)"
 short_description: Collect facts from remote devices running MikroTik RouterOS
 description:
-  - Collects a base set of device facts from a remote device that
-    is running RouterOS.  This module prepends all of the
-    base network fact keys with C(ansible_net_<fact>).  The facts
-    module will always collect a base set of facts from the device
+  - Collects a base set of device facts from a remote device that is running RouterOS. This module prepends all of the base
+    network fact keys with C(ansible_net_<fact>). The facts module will always collect a base set of facts from the device
     and can enable or disable collection of additional facts.
 extends_documentation_fragment:
   - community.routeros.attributes
   - community.routeros.attributes.facts
   - community.routeros.attributes.facts_module
+  - community.routeros.attributes.idempotent_not_modify_state
 attributes:
   platform:
     support: full
@@ -29,12 +27,10 @@ attributes:
 options:
   gather_subset:
     description:
-      - When supplied, this argument will restrict the facts collected
-        to a given subset.  Possible values for this argument include
-        C(all), C(hardware), C(config), C(interfaces), and C(routing).
-      - Can specify a list of values to include a larger subset.
-        Values can also be used with an initial C(!) to specify that a
-        specific subset should not be collected.
+      - When supplied, this argument will restrict the facts collected to a given subset. Possible values for this argument
+        include V(all), V(hardware), V(config), V(interfaces), and V(routing).
+      - Can specify a list of values to include a larger subset. Values can also be used with an initial V(!) to specify that
+        a specific subset should not be collected.
     required: false
     default:
       - '!config'
@@ -42,10 +38,10 @@ options:
     elements: str
 seealso:
   - ref: ansible_collections.community.routeros.docsite.ssh-guide
-    description: How to connect to RouterOS devices with SSH
-'''
+    description: How to connect to RouterOS devices with SSH.
+"""
 
-EXAMPLES = """
+EXAMPLES = r"""
 - name: Collect all facts from the device
   community.routeros.facts:
     gather_subset: all
@@ -61,7 +57,7 @@ EXAMPLES = """
       - "!hardware"
 """
 
-RETURN = """
+RETURN = r"""
 ansible_facts:
   description: "Dictionary of IP geolocation facts for a host's IP address."
   returned: always
@@ -75,109 +71,109 @@ ansible_facts:
     # default
     ansible_net_model:
       description: The model name returned from the device.
-      returned: I(gather_subset) contains C(default)
+      returned: O(gather_subset) contains V(default)
       type: str
     ansible_net_serialnum:
       description: The serial number of the remote device.
-      returned: I(gather_subset) contains C(default)
+      returned: O(gather_subset) contains V(default)
       type: str
     ansible_net_version:
       description: The operating system version running on the remote device.
-      returned: I(gather_subset) contains C(default)
+      returned: O(gather_subset) contains V(default)
       type: str
     ansible_net_hostname:
       description: The configured hostname of the device.
-      returned: I(gather_subset) contains C(default)
+      returned: O(gather_subset) contains V(default)
       type: str
     ansible_net_arch:
       description: The CPU architecture of the device.
-      returned: I(gather_subset) contains C(default)
+      returned: O(gather_subset) contains V(default)
       type: str
     ansible_net_uptime:
       description: The uptime of the device.
-      returned: I(gather_subset) contains C(default)
+      returned: O(gather_subset) contains V(default)
       type: str
     ansible_net_cpu_load:
       description: Current CPU load.
-      returned: I(gather_subset) contains C(default)
+      returned: O(gather_subset) contains V(default)
       type: str
 
     # hardware
     ansible_net_spacefree_mb:
       description: The available disk space on the remote device in MiB.
-      returned: I(gather_subset) contains C(hardware)
+      returned: O(gather_subset) contains V(hardware)
       type: dict
     ansible_net_spacetotal_mb:
       description: The total disk space on the remote device in MiB.
-      returned: I(gather_subset) contains C(hardware)
+      returned: O(gather_subset) contains V(hardware)
       type: dict
     ansible_net_memfree_mb:
       description: The available free memory on the remote device in MiB.
-      returned: I(gather_subset) contains C(hardware)
+      returned: O(gather_subset) contains V(hardware)
       type: int
     ansible_net_memtotal_mb:
       description: The total memory on the remote device in MiB.
-      returned: I(gather_subset) contains C(hardware)
+      returned: O(gather_subset) contains V(hardware)
       type: int
 
     # config
     ansible_net_config:
       description: The current active config from the device.
-      returned: I(gather_subset) contains C(config)
+      returned: O(gather_subset) contains V(config)
       type: str
 
     ansible_net_config_nonverbose:
       description:
         - The current active config from the device in minimal form.
-        - This value is idempotent in the sense that if the facts module is run twice and the device's config
-          was not changed between the runs, the value is identical. This is achieved by running C(/export)
-          and stripping the timestamp from the comment in the first line.
-      returned: I(gather_subset) contains C(config)
+        - This value is idempotent in the sense that if the facts module is run twice and the device's config was not changed
+          between the runs, the value is identical. This is achieved by running C(/export) and stripping the timestamp from
+          the comment in the first line.
+      returned: O(gather_subset) contains V(config)
       type: str
       version_added: 1.2.0
 
     # interfaces
     ansible_net_all_ipv4_addresses:
       description: All IPv4 addresses configured on the device.
-      returned: I(gather_subset) contains C(interfaces)
+      returned: O(gather_subset) contains V(interfaces)
       type: list
     ansible_net_all_ipv6_addresses:
       description: All IPv6 addresses configured on the device.
-      returned: I(gather_subset) contains C(interfaces)
+      returned: O(gather_subset) contains V(interfaces)
       type: list
     ansible_net_interfaces:
       description: A hash of all interfaces running on the system.
-      returned: I(gather_subset) contains C(interfaces)
+      returned: O(gather_subset) contains V(interfaces)
       type: dict
     ansible_net_neighbors:
       description: The list of neighbors from the remote device.
-      returned: I(gather_subset) contains C(interfaces)
+      returned: O(gather_subset) contains V(interfaces)
       type: dict
 
     # routing
     ansible_net_bgp_peer:
       description: A dictionary with BGP peer information.
-      returned: I(gather_subset) contains C(routing)
+      returned: O(gather_subset) contains V(routing)
       type: dict
     ansible_net_bgp_vpnv4_route:
       description: A dictionary with BGP vpnv4 route information.
-      returned: I(gather_subset) contains C(routing)
+      returned: O(gather_subset) contains V(routing)
       type: dict
     ansible_net_bgp_instance:
       description: A dictionary with BGP instance information.
-      returned: I(gather_subset) contains C(routing)
+      returned: O(gather_subset) contains V(routing)
       type: dict
     ansible_net_route:
       description: A dictionary for routes in all routing tables.
-      returned: I(gather_subset) contains C(routing)
+      returned: O(gather_subset) contains V(routing)
       type: dict
     ansible_net_ospf_instance:
       description: A dictionary with OSPF instances.
-      returned: I(gather_subset) contains C(routing)
+      returned: O(gather_subset) contains V(routing)
       type: dict
     ansible_net_ospf_neighbor:
       description: A dictionary with OSPF neighbors.
-      returned: I(gather_subset) contains C(routing)
+      returned: O(gather_subset) contains V(routing)
       type: dict
 """
 import re
@@ -311,7 +307,7 @@ class Config(FactsBase):
         '/export',
     ]
 
-    RM_DATE_RE = re.compile(r'^# [a-z0-9/][a-z0-9/]* [0-9:]* by RouterOS')
+    RM_DATE_RE = re.compile(r'^# [a-z0-9/-][a-z0-9/-]* [0-9:]* by RouterOS')
 
     def populate(self):
         super(Config, self).populate()

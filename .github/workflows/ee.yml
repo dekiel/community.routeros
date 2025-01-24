@@ -46,6 +46,10 @@ jobs:
           - name: ansible-core devel @ RHEL UBI 9
             ansible_core: https://github.com/ansible/ansible/archive/devel.tar.gz
             ansible_runner: ansible-runner
+            other_deps: |2
+                python_interpreter:
+                  package_system: python3.11 python3.11-pip python3.11-wheel python3.11-cryptography
+                  python_path: "/usr/bin/python3.11"
             base_image: docker.io/redhat/ubi9:latest
             pre_base: '"#"'
           - name: ansible-core 2.15 @ Rocky Linux 9
@@ -53,36 +57,16 @@ jobs:
             ansible_runner: ansible-runner
             base_image: quay.io/rockylinux/rockylinux:9
             pre_base: '"#"'
-          - name: ansible-core 2.14 @ CentOS Stream 9
-            ansible_core: https://github.com/ansible/ansible/archive/stable-2.14.tar.gz
-            ansible_runner: ansible-runner
-            base_image: quay.io/centos/centos:stream9
-            pre_base: '"#"'
-          - name: ansible-core 2.13 @ RHEL UBI 8
-            ansible_core: https://github.com/ansible/ansible/archive/stable-2.13.tar.gz
-            ansible_runner: ansible-runner
-            other_deps: |2
-                python_interpreter:
-                  package_system: python39 python39-pip python39-wheel python39-cryptography
-            base_image: docker.io/redhat/ubi8:latest
-            pre_base: '"#"'
-          - name: ansible-core 2.12 @ CentOS Stream 8
-            ansible_core: https://github.com/ansible/ansible/archive/stable-2.12.tar.gz
-            ansible_runner: ansible-runner
-            other_deps: |2
-                python_interpreter:
-                  package_system: python39 python39-pip python39-wheel python39-cryptography
-            base_image: quay.io/centos/centos:stream8
-            pre_base: '"#"'
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: ansible_collections/${{ env.NAMESPACE }}/${{ env.COLLECTION_NAME }}
+          persist-credentials: false
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
@@ -113,7 +97,7 @@ jobs:
 
       - name: Create files for building execution environment
         run: |
-          COLLECTION_FILENAME="$(ls "${{ env.NAMESPACE }}-${{ env.COLLECTION_NAME }}"-*.tar.gz)"
+          COLLECTION_FILENAME="$(ls "${NAMESPACE}-${COLLECTION_NAME}"-*.tar.gz)"
 
           # EE config
           cat > execution-environment.yml <<EOF

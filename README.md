@@ -5,15 +5,36 @@ SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
 # Community RouterOS Collection
-[![CI](https://github.com/ansible-collections/community.routeros/workflows/CI/badge.svg?event=push)](https://github.com/ansible-collections/community.routeros/actions) [![Codecov](https://img.shields.io/codecov/c/github/ansible-collections/community.routeros)](https://codecov.io/gh/ansible-collections/community.routeros)
+[![Documentation](https://img.shields.io/badge/docs-brightgreen.svg)](https://docs.ansible.com/ansible/devel/collections/community/routeros/)
+[![CI](https://github.com/ansible-collections/community.routeros/actions/workflows/ansible-test.yml/badge.svg?branch=main)](https://github.com/ansible-collections/community.routeros/actions)
+[![Codecov](https://img.shields.io/codecov/c/github/ansible-collections/community.routeros)](https://codecov.io/gh/ansible-collections/community.routeros)
+[![REUSE status](https://api.reuse.software/badge/github.com/ansible-collections/community.routeros)](https://api.reuse.software/info/github.com/ansible-collections/community.routeros)
 
-Provides modules for [Ansible](https://www.ansible.com/community) to manage [MikroTik RouterOS](http://www.mikrotik-routeros.net/routeros.aspx) instances.
+Provides modules for [Ansible](https://www.ansible.com/community) to manage [MikroTik RouterOS](https://mikrotik.com/software) instances.
 
 You can find [documentation for the modules and plugins in this collection here](https://docs.ansible.com/ansible/devel/collections/community/routeros/).
 
+## Code of Conduct
+
+We follow [Ansible Code of Conduct](https://docs.ansible.com/ansible/latest/community/code_of_conduct.html) in all our interactions within this project.
+
+If you encounter abusive behavior violating the [Ansible Code of Conduct](https://docs.ansible.com/ansible/latest/community/code_of_conduct.html), please refer to the [policy violations](https://docs.ansible.com/ansible/latest/community/code_of_conduct.html#policy-violations) section of the Code of Conduct for information on how to raise a complaint.
+
+## Communication
+
+* Join the Ansible forum:
+  * [Get Help](https://forum.ansible.com/c/help/6): get help or help others.Please add appropriate tags if you start new discussions, for example the `routeros` tag.
+  * [Posts tagged with 'routeros'](https://forum.ansible.com/tag/routeros): subscribe to participate in RouterOS related conversations.
+  * [Social Spaces](https://forum.ansible.com/c/chat/4): gather and interact with fellow enthusiasts.
+  * [News & Announcements](https://forum.ansible.com/c/news/5): track project-wide announcements including social events.
+
+* The Ansible [Bullhorn newsletter](https://docs.ansible.com/ansible/devel/community/communication.html#the-bullhorn): used to announce releases and important changes.
+
+For more information about communication, see the [Ansible communication guide](https://docs.ansible.com/ansible/devel/community/communication.html).
+
 ## Tested with Ansible
 
-Tested with the current Ansible 2.9, ansible-base 2.10, ansible-core 2.11, ansible-core 2.12, ansible-core 2.13, and ansible-core 2.14 releases and the current development version of ansible-core. Ansible versions before 2.9.10 are not supported.
+Tested with the current ansible-core 2.15, ansible-core 2.16, ansible-core 2.17, and ansible-core 2.18 releases and the current development version of ansible-core. Ansible 2.9, ansible-base 2.10, and ansible-core versions before 2.15.0 are not supported.
 
 ## External requirements
 
@@ -163,7 +184,7 @@ See [Ansible's dev guide](https://docs.ansible.com/ansible/devel/dev_guide/devel
 
 ## Release notes
 
-See the [changelog](https://github.com/ansible-collections/community.routeros/blob/main/CHANGELOG.rst).
+See the [collection's changelog](https://github.com/ansible-collections/community.routeros/blob/main/CHANGELOG.md).
 
 ## Roadmap
 

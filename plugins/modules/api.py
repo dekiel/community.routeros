@@ -8,19 +8,17 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-DOCUMENTATION = '''
----
+DOCUMENTATION = r"""
 module: api
 author: "Nikolay Dachev (@NikolayDachev)"
 short_description: Ansible module for RouterOS API
 description:
   - Ansible module for RouterOS API with the Python C(librouteros) library.
-  - This module can add, remove, update, query and execute arbitrary command in RouterOS via API.
+  - This module can add, remove, update, query, and execute arbitrary command in RouterOS through the API.
 notes:
-  - I(add), I(remove), I(update), I(cmd) and I(query) are mutually exclusive.
-  - Use the M(community.routeros.api_modify) and M(community.routeros.api_find_and_modify) modules
-    for more specific modifications, and the M(community.routeros.api_info) module for a more controlled
-    way of returning all entries for a path.
+  - O(add), O(remove), O(update), O(cmd), and O(query) are mutually exclusive.
+  - Use the M(community.routeros.api_modify) and M(community.routeros.api_find_and_modify) modules for more specific modifications,
+    and the M(community.routeros.api_info) module for a more controlled way of returning all entries for a path.
 extends_documentation_fragment:
   - community.routeros.api
   - community.routeros.attributes
@@ -35,31 +33,35 @@ attributes:
     platforms: RouterOS
   action_group:
     version_added: 2.1.0
+  idempotent:
+    support: N/A
+    details:
+      - Whether the executed command is idempotent depends on the operation performed.
 options:
   path:
     description:
       - Main path for all other arguments.
-      - If other arguments are not set, api will return all items in selected path.
-      - Example C(ip address). Equivalent of RouterOS CLI C(/ip address print).
+      - If other arguments are not set, the module will return all items in selected path.
+      - Example V(ip address). Equivalent of RouterOS CLI C(/ip address print).
     required: true
     type: str
   add:
     description:
       - Will add selected arguments in selected path to RouterOS config.
-      - Example C(address=1.1.1.1/32 interface=ether1).
+      - Example V(address=1.1.1.1/32 interface=ether1).
       - Equivalent in RouterOS CLI C(/ip address add address=1.1.1.1/32 interface=ether1).
     type: str
   remove:
     description:
       - Remove config/value from RouterOS by '.id'.
-      - Example C(*03) will remove config/value with C(id=*03) in selected path.
+      - Example V(*03) will remove config/value with C(id=*03) in selected path.
       - Equivalent in RouterOS CLI C(/ip address remove numbers=1).
       - Note C(number) in RouterOS CLI is different from C(.id).
     type: str
   update:
     description:
       - Update config/value in RouterOS by '.id' in selected path.
-      - Example C(.id=*03 address=1.1.1.3/32) and path C(ip address) will replace existing ip address with C(.id=*03).
+      - Example V(.id=*03 address=1.1.1.3/32) and path V(ip address) will replace the existing IP address with C(.id=*03).
       - Equivalent in RouterOS CLI C(/ip address set address=1.1.1.3/32 numbers=1).
       - Note C(number) in RouterOS CLI is different from C(.id).
     type: str
@@ -67,12 +69,13 @@ options:
     description:
       - Query given path for selected query attributes from RouterOS aip.
       - WHERE is key word which extend query. WHERE format is key operator value - with spaces.
-      - WHERE valid operators are C(==) or C(eq), C(!=) or C(not), C(>) or C(more), C(<) or C(less).
-      - Example path C(ip address) and query C(.id address) will return only C(.id) and C(address) for all items in C(ip address) path.
-      - Example path C(ip address) and query C(.id address WHERE address == 1.1.1.3/32).
-        will return only C(.id) and C(address) for items in C(ip address) path, where address is eq to 1.1.1.3/32.
-      - Example path C(interface) and query C(mtu name WHERE mut > 1400) will
-        return only interfaces C(mtu,name) where mtu is bigger than 1400.
+      - WHERE valid operators are V(==) or V(eq), V(!=) or V(not), V(>) or V(more), V(<) or V(less).
+      - Example path V(ip address) and query V(.id address) will return only C(.id) and C(address) for all items in V(ip address)
+        path.
+      - Example path V(ip address) and query V(.id address WHERE address == 1.1.1.3/32). will return only C(.id) and C(address)
+        for items in V(ip address) path, where address is eq to 1.1.1.3/32.
+      - Example path V(interface) and query V(mtu name WHERE mut > 1400) will return only interfaces C(mtu,name) where mtu
+        is bigger than 1400.
       - Equivalent in RouterOS CLI C(/interface print where mtu > 1400).
     type: str
   extended_query:
@@ -84,76 +87,83 @@ options:
       attributes:
         description:
           - The list of attributes to return.
-          - Every attribute used in a I(where) clause need to be listed here.
+          - Every attribute used in a O(extended_query.where[]) clause need to be listed here.
         type: list
         elements: str
         required: true
       where:
         description:
           - Allows to restrict the objects returned.
-          - The conditions here must all match. An I(or) condition needs at least one of its conditions to match.
+          - The conditions here must all match. An O(extended_query.where[].or) condition needs at least one of its conditions
+            to match.
         type: list
         elements: dict
         suboptions:
           attribute:
             description:
-              - The attribute to match. Must be part of I(attributes).
-              - Either I(or) or all of I(attribute), I(is), and I(value) have to be specified.
+              - The attribute to match. Must be part of O(extended_query.attributes).
+              - Either O(extended_query.where[].or) or all of O(extended_query.where[].attribute), O(extended_query.where[].is),
+                and O(extended_query.where[].value) have to be specified.
             type: str
           is:
             description:
               - The operator to use for matching.
-              - For equality use C(==) or C(eq). For less use C(<) or C(less). For more use C(>) or C(more).
-              - Use C(in) to check whether the value is part of a list. In that case, I(value) must be a list.
-              - Either I(or) or all of I(attribute), I(is), and I(value) have to be specified.
+              - For equality use V(==) or V(eq). For less use V(<) or V(less). For more use V(>) or V(more).
+              - Use V(in) to check whether the value is part of a list. In that case, O(extended_query.where[].value) must
+                be a list.
+              - Either O(extended_query.where[].or) or all of O(extended_query.where[].attribute), O(extended_query.where[].is),
+                and O(extended_query.where[].value) have to be specified.
             type: str
             choices: ["==", "!=", ">", "<", "in", "eq", "not", "more", "less"]
           value:
             description:
-              - The value to compare to. Must be a list for I(is=in).
-              - Either I(or) or all of I(attribute), I(is), and I(value) have to be specified.
+              - The value to compare to. Must be a list for O(extended_query.where[].is=in).
+              - Either O(extended_query.where[].or) or all of O(extended_query.where[].attribute), O(extended_query.where[].is),
+                and O(extended_query.where[].value) have to be specified.
             type: raw
           or:
             description:
               - A list of conditions so that at least one of them has to match.
-              - Either I(or) or all of I(attribute), I(is), and I(value) have to be specified.
+              - Either O(extended_query.where[].or) or all of O(extended_query.where[].attribute), O(extended_query.where[].is),
+                and O(extended_query.where[].value) have to be specified.
             type: list
             elements: dict
             suboptions:
               attribute:
                 description:
-                  - The attribute to match. Must be part of I(attributes).
+                  - The attribute to match. Must be part of O(extended_query.attributes).
                 type: str
                 required: true
               is:
                 description:
                   - The operator to use for matching.
-                  - For equality use C(==) or C(eq). For less use C(<) or C(less). For more use C(>) or C(more).
-                  - Use C(in) to check whether the value is part of a list. In that case, I(value) must be a list.
+                  - For equality use V(==) or V(eq). For less use V(<) or V(less). For more use V(>) or V(more).
+                  - Use V(in) to check whether the value is part of a list. In that case, O(extended_query.where[].or[].value)
+                    must be a list.
                 type: str
                 choices: ["==", "!=", ">", "<", "in", "eq", "not", "more", "less"]
                 required: true
               value:
                 description:
-                  - The value to compare to. Must be a list for I(is=in).
+                  - The value to compare to. Must be a list for O(extended_query.where[].or[].is=in).
                 type: raw
                 required: true
   cmd:
     description:
       - Execute any/arbitrary command in selected path, after the command we can add C(.id).
-      - Example path C(system script) and cmd C(run .id=*03) is equivalent in RouterOS CLI C(/system script run number=0).
-      - Example path C(ip address) and cmd C(print) is equivalent in RouterOS CLI C(/ip address print).
+      - Example path V(system script) and cmd V(run .id=*03) is equivalent in RouterOS CLI C(/system script run number=0).
+      - Example path V(ip address) and cmd V(print) is equivalent in RouterOS CLI C(/ip address print).
     type: str
 seealso:
   - ref: ansible_collections.community.routeros.docsite.quoting
-    description: How to quote and unquote commands and arguments
+    description: How to quote and unquote commands and arguments.
   - module: community.routeros.api_facts
   - module: community.routeros.api_find_and_modify
   - module: community.routeros.api_info
   - module: community.routeros.api_modify
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: Get example - ip address print
   community.routeros.api:
     hostname: "{{ hostname }}"
@@ -212,24 +222,24 @@ EXAMPLES = '''
         - attribute: "network"
           is: "in"
           value:
-             - "10.20.36.0"
-             - "192.168.255.0"
+            - "10.20.36.0"
+            - "192.168.255.0"
   register: extended_queryout
 
 - name: Dump "Extended query example" output
   ansible.builtin.debug:
     msg: '{{ extended_queryout }}'
 
-- name: Update example - ether2 ip addres with ".id = *14"
+- name: Update example - ether2 ip address with ".id = *14"
   community.routeros.api:
     hostname: "{{ hostname }}"
     password: "{{ password }}"
     username: "{{ username }}"
     path: "ip address"
     update: >-
-        .id=*14
-        address=192.168.255.20/24
-        comment={{ 'Update 192.168.255.10/24 to 192.168.255.20/24 on ether2' | community.routeros.quote_argument_value }}
+      .id=*14
+      address=192.168.255.20/24
+      comment={{ 'Update 192.168.255.10/24 to 192.168.255.20/24 on ether2' | community.routeros.quote_argument_value }}
 
 - name: Remove example - ether2 ip 192.168.255.20/24 with ".id = *14"
   community.routeros.api:
@@ -251,18 +261,17 @@ EXAMPLES = '''
 - name: Dump "Arbitrary command example" output
   ansible.builtin.debug:
     msg: '{{ arbitraryout }}'
-'''
+"""
 
-RETURN = '''
----
+RETURN = r"""
 message:
-    description: All outputs are in list with dictionary elements returned from RouterOS api.
-    sample:
-        - address: 1.2.3.4
-        - address: 2.3.4.5
-    type: list
-    returned: always
-'''
+  description: All outputs are in list with dictionary elements returned from RouterOS API.
+  sample:
+    - address: 1.2.3.4
+    - address: 2.3.4.5
+  type: list
+  returned: always
+"""
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_native
