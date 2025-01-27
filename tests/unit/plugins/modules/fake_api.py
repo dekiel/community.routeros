@@ -9,6 +9,9 @@ __metaclass__ = type
 from ansible_collections.community.routeros.plugins.module_utils._api_data import PATHS
 
 
+FAKE_ROS_VERSION = '7.5.0'
+
+
 class FakeLibRouterosError(Exception):
     def __init__(self, message):
         self.message = message
@@ -16,7 +19,7 @@ class FakeLibRouterosError(Exception):
 
 
 class TrapError(FakeLibRouterosError):
-    def __init__(self, message="failure: already have interface with such name"):
+    def __init__(self, message='failure: already have interface with such name'):
         super(TrapError, self).__init__(message)
 
 
@@ -133,7 +136,9 @@ def _normalize_entry(entry, path_info, on_create=False):
 
 
 def massage_expected_result_data(values, path, keep_all=False, remove_dynamic=False, remove_builtin=False):
-    path_info = PATHS[path]
+    versioned_path_info = PATHS[path]
+    versioned_path_info.provide_version(FAKE_ROS_VERSION)
+    path_info = versioned_path_info.get_data()
     if remove_dynamic:
         values = [entry for entry in values if not entry.get('dynamic', False)]
     if remove_builtin:
@@ -155,15 +160,25 @@ def massage_expected_result_data(values, path, keep_all=False, remove_dynamic=Fa
 class Path(object):
     def __init__(self, path, initial_values, read_only=False):
         self._path = path
-        self._path_info = PATHS[path]
+        versioned_path_info = PATHS[path]
+        versioned_path_info.provide_version(FAKE_ROS_VERSION)
+        self._path_info = versioned_path_info.get_data()
         self._values = [entry.copy() for entry in initial_values]
         for entry in self._values:
             _normalize_entry(entry, self._path_info)
         self._new_id_counter = 0
         self._read_only = read_only
 
+    def _sanitize(self, entry):
+        entry = entry.copy()
+        for field, field_info in self._path_info.fields.items():
+            if field in entry:
+                if field_info.write_only:
+                    del entry[field]
+        return entry
+
     def __iter__(self):
-        return [entry.copy() for entry in self._values].__iter__()
+        return [self._sanitize(entry) for entry in self._values].__iter__()
 
     def _find_id(self, id, required=False):
         for index, entry in enumerate(self._values):
@@ -187,7 +202,15 @@ class Path(object):
         entry = {
             '.id': id,
         }
-        entry.update(kwargs)
+        for field, value in kwargs.items():
+            if field.startswith('!'):
+                field = field[1:]
+            if field not in self._path_info.fields:
+                raise ValueError('Trying to set unknown field "{field}"'.format(field=field))
+            field_info = self._path_info.fields[field]
+            if field_info.read_only:
+                raise ValueError('Trying to set read-only field "{field}"'.format(field=field))
+            entry[field] = value
         _normalize_entry(entry, self._path_info, on_create=True)
         self._values.append(entry)
         return id
@@ -216,6 +239,16 @@ class Path(object):
         entry = self._values[index]
         if entry.get('dynamic', False) or entry.get('builtin', False):
             raise Exception('Trying to update a dynamic or builtin entry')
+        for field in kwargs:
+            if field == '.id':
+                continue
+            if field.startswith('!'):
+                field = field[1:]
+            if field not in self._path_info.fields:
+                raise ValueError('Trying to update unknown field "{field}"'.format(field=field))
+            field_info = self._path_info.fields[field]
+            if field_info.read_only:
+                raise ValueError('Trying to update read-only field "{field}"'.format(field=field))
         entry.update(kwargs)
         _normalize_entry(entry, self._path_info)
 

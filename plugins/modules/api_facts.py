@@ -9,29 +9,27 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-DOCUMENTATION = '''
----
+DOCUMENTATION = r"""
 module: api_facts
 author:
-    - "Egor Zaitsev (@heuels)"
-    - "Nikolay Dachev (@NikolayDachev)"
-    - "Felix Fontein (@felixfontein)"
+  - "Egor Zaitsev (@heuels)"
+  - "Nikolay Dachev (@NikolayDachev)"
+  - "Felix Fontein (@felixfontein)"
 version_added: 2.1.0
 short_description: Collect facts from remote devices running MikroTik RouterOS using the API
 description:
-  - Collects a base set of device facts from a remote device that
-    is running RouterOS.  This module prepends all of the
-    base network fact keys with C(ansible_net_<fact>).  The facts
-    module will always collect a base set of facts from the device
+  - Collects a base set of device facts from a remote device that is running RouterOS. This module prepends all of the base
+    network fact keys with C(ansible_net_<fact>). The facts module will always collect a base set of facts from the device
     and can enable or disable collection of additional facts.
-  - As opposed to the M(community.routeros.facts) module, it uses the
-    RouterOS API, similar to the M(community.routeros.api) module.
+  - As opposed to the M(community.routeros.facts) module, it uses the RouterOS API, similar to the M(community.routeros.api)
+    module.
 extends_documentation_fragment:
   - community.routeros.api
   - community.routeros.attributes
   - community.routeros.attributes.actiongroup_api
   - community.routeros.attributes.facts
   - community.routeros.attributes.facts_module
+  - community.routeros.attributes.idempotent_not_modify_state
 attributes:
   platform:
     support: full
@@ -39,12 +37,10 @@ attributes:
 options:
   gather_subset:
     description:
-      - When supplied, this argument will restrict the facts collected
-        to a given subset.  Possible values for this argument include
-        C(all), C(hardware), C(interfaces), and C(routing).
-      - Can specify a list of values to include a larger subset.
-        Values can also be used with an initial C(!) to specify that a
-        specific subset should not be collected.
+      - When supplied, this argument will restrict the facts collected to a given subset. Possible values for this argument
+        include V(all), V(hardware), V(interfaces), and V(routing).
+      - Can specify a list of values to include a larger subset. Values can also be used with an initial V(!) to specify that
+        a specific subset should not be collected.
     required: false
     default:
       - all
@@ -56,9 +52,9 @@ seealso:
   - module: community.routeros.api_find_and_modify
   - module: community.routeros.api_info
   - module: community.routeros.api_modify
-'''
+"""
 
-EXAMPLES = """
+EXAMPLES = r"""
 - name: Collect all facts from the device
   community.routeros.api_facts:
     hostname: 192.168.88.1
@@ -75,7 +71,7 @@ EXAMPLES = """
       - "!hardware"
 """
 
-RETURN = """
+RETURN = r"""
 ansible_facts:
   description: "Dictionary of IP geolocation facts for a host's IP address."
   returned: always
@@ -89,93 +85,93 @@ ansible_facts:
     # default
     ansible_net_model:
       description: The model name returned from the device.
-      returned: I(gather_subset) contains C(default)
+      returned: O(gather_subset) contains V(default)
       type: str
     ansible_net_serialnum:
       description: The serial number of the remote device.
-      returned: I(gather_subset) contains C(default)
+      returned: O(gather_subset) contains V(default)
       type: str
     ansible_net_version:
       description: The operating system version running on the remote device.
-      returned: I(gather_subset) contains C(default)
+      returned: O(gather_subset) contains V(default)
       type: str
     ansible_net_hostname:
       description: The configured hostname of the device.
-      returned: I(gather_subset) contains C(default)
+      returned: O(gather_subset) contains V(default)
       type: str
     ansible_net_arch:
       description: The CPU architecture of the device.
-      returned: I(gather_subset) contains C(default)
+      returned: O(gather_subset) contains V(default)
       type: str
     ansible_net_uptime:
       description: The uptime of the device.
-      returned: I(gather_subset) contains C(default)
+      returned: O(gather_subset) contains V(default)
       type: str
     ansible_net_cpu_load:
       description: Current CPU load.
-      returned: I(gather_subset) contains C(default)
+      returned: O(gather_subset) contains V(default)
       type: str
 
     # hardware
     ansible_net_spacefree_mb:
       description: The available disk space on the remote device in MiB.
-      returned: I(gather_subset) contains C(hardware)
+      returned: O(gather_subset) contains V(hardware)
       type: dict
     ansible_net_spacetotal_mb:
       description: The total disk space on the remote device in MiB.
-      returned: I(gather_subset) contains C(hardware)
+      returned: O(gather_subset) contains V(hardware)
       type: dict
     ansible_net_memfree_mb:
       description: The available free memory on the remote device in MiB.
-      returned: I(gather_subset) contains C(hardware)
+      returned: O(gather_subset) contains V(hardware)
       type: int
     ansible_net_memtotal_mb:
       description: The total memory on the remote device in MiB.
-      returned: I(gather_subset) contains C(hardware)
+      returned: O(gather_subset) contains V(hardware)
       type: int
 
     # interfaces
     ansible_net_all_ipv4_addresses:
       description: All IPv4 addresses configured on the device.
-      returned: I(gather_subset) contains C(interfaces)
+      returned: O(gather_subset) contains V(interfaces)
       type: list
     ansible_net_all_ipv6_addresses:
       description: All IPv6 addresses configured on the device.
-      returned: I(gather_subset) contains C(interfaces)
+      returned: O(gather_subset) contains V(interfaces)
       type: list
     ansible_net_interfaces:
       description: A hash of all interfaces running on the system.
-      returned: I(gather_subset) contains C(interfaces)
+      returned: O(gather_subset) contains V(interfaces)
       type: dict
     ansible_net_neighbors:
       description: The list of neighbors from the remote device.
-      returned: I(gather_subset) contains C(interfaces)
+      returned: O(gather_subset) contains V(interfaces)
       type: dict
 
     # routing
     ansible_net_bgp_peer:
       description: A dictionary with BGP peer information.
-      returned: I(gather_subset) contains C(routing)
+      returned: O(gather_subset) contains V(routing)
       type: dict
     ansible_net_bgp_vpnv4_route:
       description: A dictionary with BGP vpnv4 route information.
-      returned: I(gather_subset) contains C(routing)
+      returned: O(gather_subset) contains V(routing)
       type: dict
     ansible_net_bgp_instance:
       description: A dictionary with BGP instance information.
-      returned: I(gather_subset) contains C(routing)
+      returned: O(gather_subset) contains V(routing)
       type: dict
     ansible_net_route:
       description: A dictionary for routes in all routing tables.
-      returned: I(gather_subset) contains C(routing)
+      returned: O(gather_subset) contains V(routing)
       type: dict
     ansible_net_ospf_instance:
       description: A dictionary with OSPF instances.
-      returned: I(gather_subset) contains C(routing)
+      returned: O(gather_subset) contains V(routing)
       type: dict
     ansible_net_ospf_neighbor:
       description: A dictionary with OSPF neighbors.
-      returned: I(gather_subset) contains C(routing)
+      returned: O(gather_subset) contains V(routing)
       type: dict
 """
 

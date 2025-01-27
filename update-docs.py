@@ -9,7 +9,12 @@
 Updates DOCUMENTATION of modules using module_utils._api_data with the correct list of supported paths.
 '''
 
-from plugins.module_utils._api_data import (
+import sys
+
+# Ensure that we can import things from ansible_collections
+sys.path.append('../../..')
+
+from ansible_collections.community.routeros.plugins.module_utils._api_data import (
     PATHS,
     join_path,
 )
@@ -37,7 +42,7 @@ def main():
     path_choices = sorted([join_path(path) for path, path_info in PATHS.items() if path_info.fully_understood])
 
     for file in MODULES:
-        update_file(file, '    # BEGIN PATH LIST', '    # END PATH LIST', '        - {choice}', path_choices)
+        update_file(file, '    # BEGIN PATH LIST', '    # END PATH LIST', '      - {choice}', path_choices)
 
 
 if __name__ == '__main__':
